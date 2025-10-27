@@ -2,13 +2,11 @@ name: Pull Request validation
 
 on: [pull_request]
 
-
 jobs:
   joltkin-contracts-ci:
     name: Run joltkin-contracts validation
-    uses: ./.github/workflows/joltkin-contracts-ci.yaml
+    uses: ./.github/workflows/joltkin-contracts-ci.yml
 
   joltkin-frontend-ci:
     name: Run joltkin-frontend validation
-    uses: ./.github/workflows/joltkin-frontend-ci.yaml
-
+    uses: ./.github/workflows/joltkin-frontend-ci.yml

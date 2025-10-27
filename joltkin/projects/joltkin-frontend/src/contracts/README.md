@@ -1,4 +1,4 @@
-## How to connect my web app with Algorand smart contracts?
+# How to connect my web app with Algorand smart contracts?
 
 The following folder is reserved for the Algorand Application Clients. The clients are used to interact with instances of Algorand Smart Contracts (ASC1s) deployed on-chain.
 

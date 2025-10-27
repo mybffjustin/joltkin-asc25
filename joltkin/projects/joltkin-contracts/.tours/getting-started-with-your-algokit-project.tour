@@ -18,17 +18,17 @@
       "line": 1
     },
     {
-      "file": "smart_contracts/hello_world/deploy-config.ts",
+      "file": "smart_contracts/clear_deals/deploy-config.ts",
       "description": "The default deployment scripts invoke a sample method on the starter contract that demonstrates how to interact with your deployed Algorand on-chain applications using the [`AlgoKit Typed Clients`](https://github.com/algorandfoundation/algokit-cli/blob/main/docs/features/generate.md#1-typed-clients) feature. The invocation if deploy is aliased in `.algokit.toml` file, allowing simple deployments via `algokit project deploy` command.",
       "line": 32
     },
     {
-      "file": "smart_contracts/hello_world/contact.spec.ts",
+      "file": "smart_contracts/clear_deals/contract.algo.spec.ts",
       "description": "The default tests provided demonstrate an example of setting up in-memory fast unit tests with the Algorand TypeScript testing library that mocks AVM functionality.",
       "line": 5
     },
     {
-      "file": "smart_contracts/hello_world/contact.e2e.spec.ts",
+      "file": "smart_contracts/clear_deals/contract.e2e.spec.ts",
       "description": "The default tests provided demonstrate an example of setting up an end-to-end test with fixtures, and testing smart contract calls against a LocalNet network via an AlgoKit typed client.",
       "line": 7
     },

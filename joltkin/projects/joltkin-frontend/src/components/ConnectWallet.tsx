@@ -22,7 +22,7 @@ const ConnectWallet = ({ openModal, closeModal }: ConnectWalletInterface) => {
   return (
     <dialog id="connect_wallet_modal" className={`modal modal-bottom sm:modal-middle backdrop-blur-sm ${openModal ? 'modal-open' : ''}`}>
       <div className="modal-box bg-neutral-800 text-gray-100 rounded-2xl shadow-xl border border-neutral-700 p-6">
-        <h3 className="flex items-center gap-3 text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-500 mb-6">
+        <h3 className="flex items-center gap-3 text-2xl font-bold text-clear bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-500 mb-6">
           <BsWallet2 className="text-3xl" />
           Select wallet provider
         </h3>
@@ -41,7 +41,7 @@ const ConnectWallet = ({ openModal, closeModal }: ConnectWalletInterface) => {
                 data-test-id={`${wallet.id}-connect`}
                 className={`
                   w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-300 transform active:scale-95
-                  bg-neutral-700 hover:bg-neutral-600 border border-transparent
+                  bg-neutral-700 hover:bg-neutral-600 border border-clear
                   focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-neutral-800
                 `}
                 key={`provider-${wallet.id}`}

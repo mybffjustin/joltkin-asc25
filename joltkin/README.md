@@ -5,6 +5,7 @@ This starter full stack project has been generated using AlgoKit. See below for 
 ## Setup
 
 ### Initial setup
+
 1. Clone this repository to your local machine.
 2. Ensure [Docker](https://www.docker.com/) is installed and operational. Then, install `AlgoKit` following this [guide](https://github.com/algorandfoundation/algokit-cli#install).
 3. Run `algokit project bootstrap all` in the project directory. This command sets up your environment by installing necessary dependencies, setting up a Python virtual environment, and preparing your `.env` file.
@@ -26,8 +27,9 @@ This starter full stack project has been generated using AlgoKit. See below for 
 This project uses [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) to define CI/CD workflows, which are located in the [`.github/workflows`](./.github/workflows) folder. You can configure these actions to suit your project's needs, including CI checks, audits, linting, type checking, testing, and deployments to TestNet.
 
 For pushes to `main` branch, after the above checks pass, the following deployment actions are performed:
-  - The smart contract(s) are deployed to TestNet using [AlgoNode](https://algonode.io).
-  - The frontend application is deployed to a provider of your choice (Netlify, Vercel, etc.). See [frontend README](frontend/README.md) for more information.
+
+- The smart contract(s) are deployed to TestNet using [AlgoNode](https://algonode.io).
+- The frontend application is deployed to a provider of your choice (Netlify, Vercel, etc.). See [frontend README](frontend/README.md) for more information.
 
 > Please note deployment of smart contracts is done via `algokit deploy` command which can be invoked both via CI as seen on this project, or locally. For more information on how to use `algokit deploy` please see [AlgoKit documentation](https://github.com/algorandfoundation/algokit-cli/blob/main/docs/features/deploy.md).
 
@@ -48,7 +50,7 @@ It has also been configured to have a productive dev experience out of the box i
 Refer to the [joltkin-contracts](projects/joltkin-contracts/README.md) folder for overview of working with smart contracts, [projects/joltkin-frontend](projects/joltkin-frontend/README.md) for overview of the React project and the [projects/joltkin-frontend/contracts](projects/joltkin-frontend/src/contracts/README.md) folder for README on adding new smart contracts from backend as application clients on your frontend. The templates provided in these folders will help you get started.
 When you compile and generate smart contract artifacts, your frontend component will automatically generate typescript application clients from smart contract artifacts and move them to `frontend/src/contracts` folder, see [`generate:app-clients` in package.json](projects/joltkin-frontend/package.json). Afterwards, you are free to import and use them in your frontend application.
 
-The frontend starter also provides an example of interactions with your HelloWorldClient in [`AppCalls.tsx`](projects/joltkin-frontend/src/components/AppCalls.tsx) component by default.
+The frontend starter also provides an example of interactions with your ClearDeals client in [`AppCalls.tsx`](projects/joltkin-frontend/src/components/AppCalls.tsx) component by default.
 
 ## Next Steps
 
