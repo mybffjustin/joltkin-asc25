@@ -1,0 +1,68 @@
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependency directories
+node_modules/
+.pnpm/
+.pnpm-store/
+.pnp
+.pnp.*
+.npm/
+.yarn/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Build artifacts & caches
+dist/
+build/
+.vite/
+.vitest/
+.vscode-test/
+.turbo/
+.cache/
+.parcel-cache/
+.rollup.cache
+.eslintcache
+.stylelintcache
+coverage/
+coverage-*/
+.nyc_output/
+reports/
+test-results/
+playwright-report/
+playwright/.cache/
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+storybook-static/
+.storybook/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.template
+!.env.sample
+env/
+
+# IDE / OS metadata
+.DS_Store
+.idea/
+!.idea/runConfigurations/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Deployment providers
+.vercel/
+.netlify/
+.firebase/
+.amplify/

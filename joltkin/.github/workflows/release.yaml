@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.vscode/**'
+      - '.idea/**'
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  joltkin-contracts-validate:
+    name: Run joltkin-contracts release
+    secrets: inherit
+    uses: ./.github/workflows/joltkin-contracts-ci.yaml
+
+  joltkin-contracts-release:
+    name: Run joltkin-contracts release
+    secrets: inherit
+    uses: ./.github/workflows/joltkin-contracts-cd.yaml
+    needs: joltkin-contracts-validate
+
+  joltkin-frontend-validate:
+    name: Run joltkin-frontend release
+    secrets: inherit
+    uses: ./.github/workflows/joltkin-frontend-ci.yaml
+
+  joltkin-frontend-release:
+    name: Run joltkin-frontend release
+    secrets: inherit
+    uses: ./.github/workflows/joltkin-frontend-cd.yaml
+    needs: joltkin-frontend-validate

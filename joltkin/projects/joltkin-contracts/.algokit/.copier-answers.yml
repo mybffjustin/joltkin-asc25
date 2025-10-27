@@ -1,0 +1,9 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 0.3.5
+_src_path: gh:algorandfoundation/algokit-typescript-template
+author_email: justinh@alumni.harvard.edu
+author_name: mybffjustin
+contract_name: hello_world
+preset_name: production
+project_name: joltkin-contracts
+

@@ -1,0 +1,45 @@
+# Workspace-specific ignore rules (shared patterns live in the repository root .gitignore).
+
+# Node toolchain artifacts
+node_modules/
+.pnpm/
+.pnpm-store/
+.pnp.*
+.yarn/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+.vitest/
+.vscode-test/
+.turbo/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+*.tsbuildinfo.*
+dist/
+build/
+coverage/
+test-results/
+playwright-report/
+
+# Environment overrides
+.env
+.env.*
+!.env.example
+!.env.template
+!.env.sample
+
+# AlgoKit generated files
+.algokit/**/cache/
+.algokit/**/tmp/
+.algokit/**/generated/
+.algokit/**/downloads/
+.algokit/**/logs/
+debug_traces/
+**/artifacts/
+**/*.teal.tok
+**/*.teal.json
+**/*.algo.json
+**/*.algo.msgp
+

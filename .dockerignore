@@ -1,0 +1,86 @@
+# Version control metadata
+.git
+.gitignore
+.gitmodules
+
+# Editor settings that are not needed inside the image
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs and runtime state
+**/*.log
+**/*.pid
+**/*.pid.lock
+
+# Environment files and secrets (allow templates back in)
+*.env
+*.env.*
+!*.env.example
+!*.env.template
+!*.env.sample
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+*.jks
+*.keystore
+*.mnemonic
+*.wallet
+secrets.*
+credentials.*
+
+# Dependency directories and package manager caches
+**/node_modules
+**/.pnpm
+**/.pnpm-store
+**/.pnp*
+**/.npm
+**/.yarn
+**/.yarn/cache
+**/.yarn/unplugged
+**/.yarn/build-state.yml
+**/.yarn/install-state.gz
+
+# Build artifacts, caches, and test reports
+**/dist
+**/build
+**/out
+**/tmp
+**/temp
+**/.vite
+**/.vitest
+**/.vscode-test
+**/.turbo
+**/.cache
+**/.parcel-cache
+**/.rollup.cache
+**/.storybook
+**/storybook-static
+**/coverage
+**/coverage-*
+**/.nyc_output
+**/reports
+**/test-results
+**/playwright-report
+**/playwright/.cache
+**/cypress/screenshots
+**/cypress/videos
+**/cypress/downloads
+**/*.tsbuildinfo
+**/*.swc
+**/*.swc.lock
+
+# Algorand / AlgoKit generated assets
+**/debug_traces
+**/.algokit/static-analysis
+**/.algokit/sources
+**/.algokit/localnet
+**/.algokit/cache
+**/.algokit/tmp
+**/artifacts
+**/*.teal.tok
+**/*.teal.json
+**/*.algo.msgp
+**/*.algo.json

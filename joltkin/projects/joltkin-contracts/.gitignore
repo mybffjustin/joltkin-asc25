@@ -1,0 +1,79 @@
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.pid
+*.pid.lock
+
+# Dependency directories
+node_modules/
+.pnpm/
+.pnpm-store/
+.pnp.*
+.npm/
+.yarn/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Build artifacts & caches
+dist/
+build/
+artifacts/
+debug_traces/
+coverage/
+coverage-*/
+.nyc_output/
+reports/
+test-results/
+playwright-report/
+.vite/
+.vitest/
+.vscode-test/
+.turbo/
+.cache/
+.parcel-cache/
+.rollup.cache
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+*.tsbuildinfo.*
+*.swc
+*.swc.lock
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.template
+!.env.sample
+
+# AlgoKit generated assets
+.algokit/static-analysis/
+.algokit/sources/
+.algokit/localnet/
+.algokit/cache/
+.algokit/tmp/
+.algokit/**/generated/
+.algokit/**/downloads/
+**/*.teal.tok
+**/*.teal.json
+**/*.algo.msgp
+**/*.algo.json
+
+# IDE / OS metadata
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.idea/
+!.idea/runConfigurations/
+
+# Test snapshots
+*.received.*
