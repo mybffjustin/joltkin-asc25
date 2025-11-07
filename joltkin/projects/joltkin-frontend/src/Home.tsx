@@ -281,6 +281,58 @@ const Home: React.FC<HomeProps> = () => {
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-rose-200/80">Discovery discipline</p>
                 <div className="mt-5 space-y-6 text-sm text-slate-300">
                   <div>
+                    <p className="text-base font-semibold text-slate-100">Gold insights (20% discovery wins)</p>
+                    <ul className="mt-4 space-y-3">
+                      <li className="space-y-1">
+                        <span className="font-semibold text-rose-200">Walk-up default creates advance-ticket anxiety.</span>
+                        <p>
+                          Leads described pre-show jitters when online tallies look soft, even though doors eventually fill from walk-ups.
+                        </p>
+                        <p className="text-slate-400">
+                          So what? Position Joltkin as the calm path to reliable pre-commit signals without eroding day-of sales.
+                        </p>
+                      </li>
+                      <li className="space-y-1">
+                        <span className="font-semibold text-rose-200">Add-on fees suppress early buys.</span>
+                        <p>The ~$1 online surcharge pushes organizers to nudge fans toward in-person payment.</p>
+                        <p className="text-slate-400">
+                          So what? Highlight zero-fee or sponsor-covered checkout as a differentiator that flips advance behavior.
+                        </p>
+                      </li>
+                      <li className="space-y-1">
+                        <span className="font-semibold text-rose-200">Volunteer churn strains doors.</span>
+                        <p>Door crews are often first-timers juggling paper lists; consistency depends on the night.</p>
+                        <p className="text-slate-400">
+                          So what? Promise a two-lane brief (QR fast lane + cash/Venmo backup) that keeps entry under ~1–2 minutes per
+                          buyer.
+                        </p>
+                      </li>
+                      <li className="space-y-1">
+                        <span className="font-semibold text-rose-200">Accessible routing still breaks down.</span>
+                        <p>At the primary off-campus venue, stairs at the main entrance triggered confusion and a reroute scramble.</p>
+                        <p className="text-slate-400">
+                          So what? Bundle an accessibility kit—map, signage, greeter plan—to de-risk ADA compliance narratives.
+                        </p>
+                      </li>
+                      <li className="space-y-1">
+                        <span className="font-semibold text-rose-200">Back-office lag lives with students, not HBO.</span>
+                        <p>
+                          HBO turns settlements around in about three days; student treasuries catch up later when Venmo/Zelle audits slip.
+                        </p>
+                        <p className="text-slate-400">
+                          So what? Sell “show-night export ready for HBO + treasurer” to prove we close the reconciliation gap.
+                        </p>
+                      </li>
+                      <li className="space-y-1">
+                        <span className="font-semibold text-rose-200">Smaller showcases need tailored economics.</span>
+                        <p>Low-dollar pop-up events underperformed due to timing, pricing, room choice, and promo fatigue.</p>
+                        <p className="text-slate-400">
+                          So what? Frame pilot tests around right-sized rooms, partner codes, and no-fee online paths to revive demand.
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
                     <p className="text-base font-semibold text-slate-100">Silver insights (80% discovery wins)</p>
                     <ul className="mt-4 space-y-3">
                       <li className="space-y-1">
