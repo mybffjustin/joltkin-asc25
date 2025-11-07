@@ -9,6 +9,7 @@ import { useSnackbar } from 'notistack'
 import React, { useRef, useState } from 'react'
 import { AiOutlineCloudUpload, AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { getAlgodConfigFromViteEnvironment } from '../utils/network/getAlgoClientConfigs'
+import { usePilotSafety } from '../context/PilotSafetyContext'
 
 interface NFTMintProps {
   openModal: boolean
@@ -37,13 +38,14 @@ const NFTmint = ({ openModal, setModalState }: NFTMintProps) => {
 
   // UI state
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string>('') 
+  const [previewUrl, setPreviewUrl] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Wallet + notifications
   const { transactionSigner, activeAddress } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
+  const { ensureMnemonicGuard, logTelemetry } = usePilotSafety()
 
   // Algorand client (TestNet by default from Vite env)
   const algodConfig = getAlgodConfigFromViteEnvironment()
@@ -61,6 +63,11 @@ const NFTmint = ({ openModal, setModalState }: NFTMintProps) => {
 
   // Main: upload → pin metadata → mint NFT
   const handleMintNFT = async () => {
+    if (!ensureMnemonicGuard('nft_mint', { hasPreview: Boolean(selectedFile) })) {
+      enqueueSnackbar('Pilot safeguard: guard coverage required before minting NFTs.', { variant: 'warning' })
+      return
+    }
+
     setLoading(true)
 
     // Guard: wallet must be connected
@@ -84,7 +91,6 @@ const NFTmint = ({ openModal, setModalState }: NFTMintProps) => {
       // Build backend URL
       const backendBase = resolveBackendBase()
       const backendApiUrl = `${backendBase.replace(/\/$/, '')}/api/pin-image`
-      console.log('Using backend URL:', backendApiUrl)
 
       // Send file → backend → Pinata/IPFS
       const formData = new FormData()
@@ -104,8 +110,11 @@ const NFTmint = ({ openModal, setModalState }: NFTMintProps) => {
       const data = await response.json()
       metadataUrl = data.metadataUrl
       if (!metadataUrl) throw new Error('Backend did not return a valid metadata URL')
-    } catch (e: any) {
+    } catch (error: unknown) {
       enqueueSnackbar('Error uploading to backend. If in Codespaces, make port 3001 Public.', { variant: 'error' })
+      logTelemetry('nft_upload_error', {
+        message: error instanceof Error ? error.message.slice(0, 80) : 'unknown',
+      })
       setLoading(false)
       return
     }
@@ -120,11 +129,11 @@ const NFTmint = ({ openModal, setModalState }: NFTMintProps) => {
       const createNFTResult = await algorand.send.assetCreate({
         sender: activeAddress,
         signer: transactionSigner,
-        total: 1n,                    // supply = 1 → NFT
-        decimals: 0,                  // indivisible
+        total: 1n, // supply = 1 → NFT
+        decimals: 0, // indivisible
         assetName: 'MasterPass Ticket', // customize
-        unitName: 'MTK',                // customize
-        url: metadataUrl,               // IPFS metadata
+        unitName: 'MTK', // customize
+        url: metadataUrl, // IPFS metadata
         metadataHash,
         defaultFrozen: false,
       })
@@ -146,12 +155,19 @@ const NFTmint = ({ openModal, setModalState }: NFTMintProps) => {
           ) : null,
       })
 
+      logTelemetry('nft_mint_success', {
+        fileSizeKb: selectedFile ? Math.round(selectedFile.size / 1024) : 0,
+        metadataPresent: Boolean(metadataUrl),
+      })
+
       // Reset form + close modal
       setSelectedFile(null)
       setPreviewUrl('')
       setTimeout(() => setModalState(false), 2000)
-    } catch (e: any) {
-      enqueueSnackbar(`Failed to mint NFT: ${e.message || 'Unknown error'}`, { variant: 'error' })
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      enqueueSnackbar(`Failed to mint NFT: ${message}`, { variant: 'error' })
+      logTelemetry('nft_mint_error', { message: message.slice(0, 80) })
     } finally {
       setLoading(false)
     }
@@ -167,9 +183,7 @@ const NFTmint = ({ openModal, setModalState }: NFTMintProps) => {
         </h3>
 
         <div className="space-y-4">
-          <label className="block text-sm font-medium text-gray-400">
-            Select an image to mint
-          </label>
+          <label className="block text-sm font-medium text-gray-400">Select an image to mint</label>
           <div
             className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-neutral-700 rounded-xl cursor-pointer hover:border-cyan-500 transition-colors"
             onClick={handleDivClick}

@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react'
 import { AiOutlineLoading3Quarters, AiOutlineInfoCircle } from 'react-icons/ai'
 import { BsCoin } from 'react-icons/bs'
 import { getAlgodConfigFromViteEnvironment } from '../utils/network/getAlgoClientConfigs'
+import { usePilotSafety } from '../context/PilotSafetyContext'
 
 interface TokenMintProps {
   openModal: boolean
@@ -16,19 +17,20 @@ interface TokenMintProps {
 }
 
 const Tokenmint = ({ openModal, setModalState }: TokenMintProps) => {
-  const LORA = 'https://lora.algokit.io/testnet';
+  const LORA = 'https://lora.algokit.io/testnet'
 
   // 👇 Default placeholder values (safe customization points for learners)
   const [assetName, setAssetName] = useState<string>('MasterPass Token') // token name
-  const [unitName, setUnitName] = useState<string>('MPT')               // short ticker
-  const [total, setTotal] = useState<string>('1000')                    // human-readable total
-  const [decimals, setDecimals] = useState<string>('0')                 // 0 = whole tokens only
+  const [unitName, setUnitName] = useState<string>('MPT') // short ticker
+  const [total, setTotal] = useState<string>('1000') // human-readable total
+  const [decimals, setDecimals] = useState<string>('0') // 0 = whole tokens only
 
   const [loading, setLoading] = useState<boolean>(false)
 
   // Wallet + notifications
   const { transactionSigner, activeAddress } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
+  const { ensureMnemonicGuard, logTelemetry } = usePilotSafety()
 
   // Algorand client (TestNet from Vite env)
   const algodConfig = getAlgodConfigFromViteEnvironment()
@@ -38,6 +40,11 @@ const Tokenmint = ({ openModal, setModalState }: TokenMintProps) => {
   // Handle Token Creation
   // ------------------------------
   const handleMintToken = async () => {
+    if (!ensureMnemonicGuard('token_mint', { decimals })) {
+      enqueueSnackbar('Pilot safeguard: guard coverage required before minting tokens.', { variant: 'warning' })
+      return
+    }
+
     if (!transactionSigner || !activeAddress) {
       enqueueSnackbar('Please connect your wallet first.', { variant: 'warning' })
       return
@@ -73,17 +80,15 @@ const Tokenmint = ({ openModal, setModalState }: TokenMintProps) => {
         signer: transactionSigner,
         total: onChainTotal,
         decimals: Number(decimalsBig),
-        assetName,   // <— customize token name
-        unitName,    // <— customize unit/ticker
+        assetName, // <— customize token name
+        unitName, // <— customize unit/ticker
         defaultFrozen: false,
       })
 
-      const id = createResult;
+      const id = createResult
 
-      enqueueSnackbar(`✅ Success! Asset ID: ${id.assetId}`, {
-        variant: 'success',
-        action: () =>
-          id ? (
+      const explorerAction = id
+        ? () => (
             <a
               href={`${LORA}/asset/${id.assetId}`}
               target="_blank"
@@ -92,8 +97,18 @@ const Tokenmint = ({ openModal, setModalState }: TokenMintProps) => {
             >
               View on Lora ↗
             </a>
-          ) : null,
-      });
+          )
+        : undefined
+
+      enqueueSnackbar(`✅ Success! Asset ID: ${id.assetId}`, {
+        variant: 'success',
+        action: explorerAction,
+      })
+
+      logTelemetry('token_mint_success', {
+        customDecimals: decimals !== '0',
+        supplyMagnitude: total.length,
+      })
 
       // Reset back to defaults after successful mint
       setAssetName('MasterPass Token')
@@ -101,8 +116,8 @@ const Tokenmint = ({ openModal, setModalState }: TokenMintProps) => {
       setTotal('1000')
       setDecimals('0')
     } catch (error) {
-      console.error(error)
       enqueueSnackbar('Failed to create token', { variant: 'error' })
+      logTelemetry('token_mint_error', { message: error instanceof Error ? error.message.slice(0, 80) : 'unknown' })
     } finally {
       setLoading(false)
     }
@@ -111,11 +126,10 @@ const Tokenmint = ({ openModal, setModalState }: TokenMintProps) => {
   // ------------------------------
   // Modal UI — Professional, clear, solid color theme + loading animations
   // ------------------------------
+  const canMint = Boolean(assetName && unitName && total)
+
   return (
-    <dialog
-      id="token_modal"
-      className={`modal modal-bottom sm:modal-middle ${openModal ? 'modal-open' : ''}`}
-    >
+    <dialog id="token_modal" className={`modal modal-bottom sm:modal-middle ${openModal ? 'modal-open' : ''}`}>
       <div
         className={`
           modal-box max-w-xl rounded-2xl border border-slate-200
@@ -254,15 +268,11 @@ const Tokenmint = ({ openModal, setModalState }: TokenMintProps) => {
         <div className="mt-6 flex flex-col-reverse sm:flex-row-reverse gap-3">
           <button
             type="button"
-            className={`
-              btn w-full sm:w-auto rounded-xl font-semibold
-              transition-all duration-200
-              ${assetName && unitName && total
-                ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                : 'bg-slate-200 text-slate-500 cursor-not-allowed'}
-            `}
+            className={`btn w-full sm:w-auto rounded-xl font-semibold transition-all duration-200 ${
+              canMint ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-slate-200 text-slate-500 cursor-not-allowed'
+            }`}
             onClick={handleMintToken}
-            disabled={loading || !assetName || !unitName || !total}
+            disabled={loading || !canMint}
           >
             {loading ? (
               <span className="flex items-center gap-2">

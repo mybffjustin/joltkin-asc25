@@ -7,6 +7,7 @@
 import { useWallet, Wallet, WalletId } from '@txnlab/use-wallet-react'
 import { BsWallet2, BsCheckCircleFill } from 'react-icons/bs'
 import Account from './Account'
+import { usePilotSafety } from '../context/PilotSafetyContext'
 
 interface ConnectWalletInterface {
   openModal: boolean
@@ -15,6 +16,7 @@ interface ConnectWalletInterface {
 
 const ConnectWallet = ({ openModal, closeModal }: ConnectWalletInterface) => {
   const { wallets, activeAddress } = useWallet()
+  const { logTelemetry } = usePilotSafety()
 
   // Detect KMD (LocalNet dev wallet) since it has no icon
   const isKmd = (wallet: Wallet) => wallet.id === WalletId.KMD
@@ -45,8 +47,15 @@ const ConnectWallet = ({ openModal, closeModal }: ConnectWalletInterface) => {
                   focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-neutral-800
                 `}
                 key={`provider-${wallet.id}`}
-                onClick={() => {
-                  return wallet.connect()
+                onClick={async () => {
+                  logTelemetry('wallet_connect_request', { wallet: wallet.id })
+                  try {
+                    await wallet.connect()
+                    logTelemetry('wallet_connect_success', { wallet: wallet.id })
+                  } catch (error) {
+                    const message = error instanceof Error ? error.message : 'unknown'
+                    logTelemetry('wallet_connect_error', { wallet: wallet.id, message: message.slice(0, 80) })
+                  }
                 }}
               >
                 {!isKmd(wallet) && (
@@ -77,6 +86,7 @@ const ConnectWallet = ({ openModal, closeModal }: ConnectWalletInterface) => {
                   const activeWallet = wallets.find((w) => w.isActive)
                   if (activeWallet) {
                     await activeWallet.disconnect()
+                    logTelemetry('wallet_disconnect', { wallet: activeWallet.id })
                   } else {
                     localStorage.removeItem('@txnlab/use-wallet:v3')
                     window.location.reload()

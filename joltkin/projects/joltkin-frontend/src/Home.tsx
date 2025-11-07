@@ -53,6 +53,13 @@ const Home: React.FC<HomeProps> = () => {
               <BsWallet2 className="text-base text-rose-200" />
               <span>{activeAddress ? 'Wallet Connected' : 'Connect Wallet'}</span>
             </button>
+            <a
+              href="/pilot-control-center"
+              className="hidden items-center gap-2 rounded-full border border-slate-700/70 bg-slate-900/80 px-5 py-2 text-sm font-semibold text-slate-200 shadow-lg shadow-slate-900/20 transition hover:border-rose-400/60 hover:text-rose-100 sm:flex"
+            >
+              <BsArrowUpRightCircle className="text-base text-rose-200" />
+              Pilot Control Center
+            </a>
           </div>
         </nav>
 
@@ -495,8 +502,8 @@ const Home: React.FC<HomeProps> = () => {
                 </div>
                 <h4 className="text-lg font-semibold text-slate-100">Clear settlements</h4>
                 <p className="mt-3 text-sm text-slate-300">
-                  Run the ClearDeals ARC-4 contract end-to-end: we auto-fund the app account, assign the operator, and log a
-                  vetted invoice with attestations and ARC-28 proof events.
+                  Run the ClearDeals ARC-4 contract end-to-end: we auto-fund the app account, assign the operator, and log a vetted invoice
+                  with attestations and ARC-28 proof events.
                 </p>
                 <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-slate-900/70 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-amber-200">
                   Updated Oct 27 2025

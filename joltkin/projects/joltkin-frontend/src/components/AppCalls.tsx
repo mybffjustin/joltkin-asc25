@@ -8,6 +8,7 @@ import { getAlgodConfigFromViteEnvironment, getIndexerConfigFromViteEnvironment 
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount'
 import type { SendSingleTransactionResult } from '@algorandfoundation/algokit-utils/types/transaction'
+import { usePilotSafety } from '../context/PilotSafetyContext'
 
 interface AppCallsInterface {
   openModal: boolean
@@ -89,6 +90,7 @@ const AppCalls = ({ openModal, setModalState }: AppCallsInterface) => {
   const [attestationCid, setAttestationCid] = useState<string>('bafy-jolt-demo-proof')
   const { enqueueSnackbar } = useSnackbar()
   const { transactionSigner, activeAddress } = useWallet()
+  const { ensureMnemonicGuard, logTelemetry } = usePilotSafety()
 
   const algodConfig = getAlgodConfigFromViteEnvironment()
   const indexerConfig = getIndexerConfigFromViteEnvironment()
@@ -101,6 +103,11 @@ const AppCalls = ({ openModal, setModalState }: AppCallsInterface) => {
   }
 
   const sendAppCall = async () => {
+    if (!ensureMnemonicGuard('clear_deals_demo', { attestationProvided: Boolean(attestationCid) })) {
+      enqueueSnackbar('Pilot safeguard: guard coverage required before logging settlements.', { variant: 'warning' })
+      return
+    }
+
     if (!activeAddress) {
       enqueueSnackbar('Connect a wallet before logging settlements.', { variant: 'warning' })
       return
@@ -137,6 +144,7 @@ const AppCalls = ({ openModal, setModalState }: AppCallsInterface) => {
       .catch((e: Error) => {
         enqueueSnackbar(`Error deploying the contract: ${e.message}`, { variant: 'error' })
         setLoading(false)
+        logTelemetry('clear_deals_error', { stage: 'deploy', message: e.message.slice(0, 80) })
         return undefined
       })
 
@@ -155,7 +163,7 @@ const AppCalls = ({ openModal, setModalState }: AppCallsInterface) => {
           : encodeAddress((rawAppAddress as { publicKey: Uint8Array }).publicKey)
 
     try {
-      await ensureAppFunding(algorand, transactionSigner, activeAddress, appAddress, appFundingTarget)
+      const fundingResult = await ensureAppFunding(algorand, transactionSigner, activeAddress, appAddress, appFundingTarget)
       await appClient.send.setOperator({ args: { operator: activeAddress } })
 
       const microAlgos = Math.max(1, Math.round(parsedAmount * 1_000_000))
@@ -185,10 +193,16 @@ const AppCalls = ({ openModal, setModalState }: AppCallsInterface) => {
       enqueueSnackbar(`Logged ${invoice} for ${algosLabel} ALGOs → payee ${payee}`, {
         variant: 'success',
       })
+      logTelemetry('clear_deals_recorded', {
+        attestation: attestationCid.trim().length > 0,
+        customPayee: payeeAddress.trim().length > 0,
+        fundingTopUp: Boolean(fundingResult),
+      })
       setInvoiceId(makeInvoiceId())
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error'
       enqueueSnackbar(`Error calling the contract: ${message}`, { variant: 'error' })
+      logTelemetry('clear_deals_error', { stage: 'record', message: message.slice(0, 80) })
     } finally {
       setLoading(false)
     }
@@ -204,8 +218,8 @@ const AppCalls = ({ openModal, setModalState }: AppCallsInterface) => {
           <p className="text-xs uppercase tracking-[0.35em] text-rose-300/80">Clear settlements</p>
           <h3 className="text-2xl font-semibold">Log a Clear Settlement Demo</h3>
           <p className="text-sm text-slate-300">
-            Deploys the ClearDeals contract, assigns your wallet as operator, and records a demo invoice with an attestation
-            hash. Use the fields below to tailor the record that gets stored on-chain.
+            Deploys the ClearDeals contract, assigns your wallet as operator, and records a demo invoice with an attestation hash. Use the
+            fields below to tailor the record that gets stored on-chain.
           </p>
           <div className="rounded-2xl border border-slate-800/70 bg-slate-900/70 px-4 py-3 text-xs text-slate-400">
             <p className="font-semibold uppercase tracking-[0.25em] text-rose-200/80">Demo checklist</p>

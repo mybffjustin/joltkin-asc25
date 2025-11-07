@@ -8,6 +8,7 @@ import { useSnackbar } from 'notistack'
 import { useState, useEffect } from 'react'
 import { AiOutlineLoading3Quarters, AiOutlineSend } from 'react-icons/ai'
 import { getAlgodConfigFromViteEnvironment } from '../utils/network/getAlgoClientConfigs'
+import { usePilotSafety } from '../context/PilotSafetyContext'
 
 type ParsedAlgorandErrorCode = 'already-opted-in' | 'user-declined' | 'insufficient-balance' | 'generic'
 
@@ -137,6 +138,7 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
   // Wallet + notifications
   const { enqueueSnackbar } = useSnackbar()
   const { transactionSigner, activeAddress } = useWallet()
+  const { ensureMnemonicGuard, logTelemetry } = usePilotSafety()
 
   // USDC constants (TestNet ASA)
   const usdcAssetId = 10458941n
@@ -155,18 +157,24 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
         const holding = findAssetHolding(accountInformation, usdcAssetId)
         setAlreadyOpted(Boolean(holding))
         setUsdcBalance(holding?.amount ?? null)
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('Opt-in precheck failed:', e)
+      } catch (error) {
+        logTelemetry('usdc_optin_precheck_error', {
+          message: error instanceof Error ? error.message.slice(0, 80) : 'unknown',
+        })
       }
     }
     checkOptIn()
-  }, [openModal, activeAddress])
+  }, [openModal, activeAddress, logTelemetry])
 
   // ------------------------------
   // Handle sending single payment
   // ------------------------------
   const handleSubmit = async () => {
+    if (!ensureMnemonicGuard('transact_single', { asset: assetType })) {
+      enqueueSnackbar('Pilot safeguard: connect through a mnemonic-guarded wallet before sending funds.', { variant: 'warning' })
+      return
+    }
+
     setLoading(true)
 
     // Guard: wallet must be connected
@@ -230,6 +238,15 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
           ) : null,
       })
 
+      const receiverProvided = Boolean(receiverAddress.trim())
+
+      logTelemetry('transact_success', { mode: 'single', asset: assetType, txPresent: Boolean(txId) })
+      logTelemetry('payment_success', {
+        asset: assetType,
+        receiverProvided,
+        txPresent: Boolean(txId),
+      })
+
       // Reset form
       setReceiverAddress('')
     } catch (e) {
@@ -238,6 +255,12 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
       const parsed = parseAlgorandError(e)
       enqueueSnackbar(`Failed to send ${assetType}${parsed.userMessage ? `: ${parsed.userMessage}` : ''}`, {
         variant: 'error',
+      })
+      logTelemetry('transact_error', { mode: 'single', asset: assetType, code: parsed.code })
+      logTelemetry('payment_error', {
+        asset: assetType,
+        code: parsed.code,
+        receiverProvided: Boolean(receiverAddress.trim()),
       })
     }
 
@@ -248,6 +271,11 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
   // USDC Opt-in for CONNECTED wallet (fixed: safe BigInt handling)
   // ------------------------------
   const handleOptInUSDC = async () => {
+    if (!ensureMnemonicGuard('transact_opt_in', { asset: 'USDC' })) {
+      enqueueSnackbar('Pilot safeguard: guard coverage required before opting in assets.', { variant: 'warning' })
+      return
+    }
+
     setOptInLoading(true)
 
     if (!transactionSigner || !activeAddress) {
@@ -294,6 +322,8 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
           ) : null,
       })
 
+      logTelemetry('transact_opt_in_success', { asset: 'USDC', txPresent: Boolean(txId) })
+
       // reflect that we're now opted in
       setAlreadyOpted(true)
       setUsdcBalance(0n)
@@ -314,6 +344,8 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
           variant: 'error',
         })
       }
+
+      logTelemetry('transact_opt_in_error', { code: parsed.code })
     }
 
     setOptInLoading(false)
@@ -325,6 +357,11 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
   // Note: Receiver must be opted-in to USDC (10458941).
   // ------------------------------
   const handleAtomicGroup = async () => {
+    if (!ensureMnemonicGuard('transact_atomic', { asset: 'ALGO+USDC' })) {
+      enqueueSnackbar('Pilot safeguard: guard coverage required before running atomic transfers.', { variant: 'warning' })
+      return
+    }
+
     setGroupLoading(true)
 
     if (!transactionSigner || !activeAddress) {
@@ -379,6 +416,8 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
           ) : null,
       })
 
+      logTelemetry('transact_success', { mode: 'atomic', txPresent: Boolean(firstTx) })
+
       setGroupReceiverAddress('')
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -386,6 +425,7 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
       enqueueSnackbar('Atomic transfer failed. Make sure the receiver is opted into USDC (10458941).', {
         variant: 'error',
       })
+      logTelemetry('transact_error', { mode: 'atomic' })
     }
 
     setGroupLoading(false)
@@ -469,7 +509,7 @@ const Transact = ({ openModal, setModalState }: TransactInterface) => {
           </button>
           <button
             type="button"
-            className="btn w-full sm:w-auto bg-neutral-700 hover:bg-neutral-600 border-none text-gray-300 rounded-xl"
+            className="btn w-full sm:w-auto bg-neutral-700 hover:bg-neutral-600 text-gray-200 rounded-xl border-none font-semibold transition-all duration-300"
             onClick={() => setModalState(false)}
           >
             Close
