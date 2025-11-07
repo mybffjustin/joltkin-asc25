@@ -1,6 +1,6 @@
 {
   "framework": "vite",
-  "installCommand": "cd joltkin/projects/joltkin-frontend && corepack enable && pnpm install --frozen-lockfile",
+  "installCommand": "cd joltkin/projects/joltkin-frontend && corepack enable && corepack prepare pnpm@9.12.2 --activate && pnpm install --frozen-lockfile",
   "buildCommand": "cd joltkin/projects/joltkin-frontend && pnpm run build",
   "outputDirectory": "joltkin/projects/joltkin-frontend/dist",
   "routes": [
