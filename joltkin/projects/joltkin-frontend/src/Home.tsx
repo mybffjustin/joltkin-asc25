@@ -15,6 +15,7 @@ import Tokenmint from './components/Tokenmint'
 
 // Smart contract demo modal (backend app calls)
 import AppCalls from './components/AppCalls'
+import StripeCheckoutCTA from './components/StripeCheckoutCTA'
 
 interface HomeProps {}
 
@@ -133,6 +134,7 @@ const Home: React.FC<HomeProps> = () => {
                     </li>
                   </ol>
                 </div>
+                <StripeCheckoutCTA />
               </div>
             </div>
           </header>

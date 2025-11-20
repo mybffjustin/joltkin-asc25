@@ -13,9 +13,10 @@ const PinataSDK = pinataModule.PinataSDK || pinataModule.default || pinataModule
 const dotenv = require('dotenv')
 const { Readable } = require('stream')
 const path = require('path')
-
 // Ensure we load .env from THIS folder (nft_mint_server/.env)
 dotenv.config({ path: path.join(__dirname, '.env') })
+
+const stripeRoutes = require('./routes/stripeCheckout')
 
 const app = express()
 const port = process.env.PORT || 3001
@@ -33,6 +34,7 @@ console.log('Backend server starting...')
 console.log('Pinata API Key:', process.env.PINATA_API_KEY ? 'Loaded' : 'Not Loaded')
 console.log('Pinata API Secret:', process.env.PINATA_API_SECRET ? 'Loaded' : 'Not Loaded')
 console.log('Pinata JWT:', process.env.PINATA_JWT ? 'Loaded' : 'Not Loaded')
+console.log('Stripe secret key:', process.env.STRIPE_SECRET_KEY ? 'Loaded' : 'Not Loaded')
 
 // Multer setup: keep uploaded files in memory (not saved to disk).
 // This makes it easier to forward the file directly to Pinata.
@@ -184,6 +186,9 @@ app.post('/api/pin-image', upload.single('file'), async (req, res) => {
     res.status(500).json({ error: msg })
   }
 })
+
+// Stripe endpoints (checkout session, webhook, etc.)
+app.use('/api/stripe', stripeRoutes)
 
 // Start the server
 app.listen(port, '0.0.0.0', () => {

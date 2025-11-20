@@ -56,6 +56,18 @@ This project supports both standalone and monorepo setups through AlgoKit worksp
 
 > Please note, by default frontend is pre configured to run against Algorand LocalNet. If you want to run against TestNet or MainNet, comment out the current environment variable and uncomment the relevant one in [`.env`](.env) file that is created after running bootstrap command and based on [`.env.template`](.env.template).
 
+### Stripe test checkout variables
+
+To exercise the pilot Stripe checkout flow, populate the following keys in your `.env` (copy of `.env.template`):
+
+- `VITE_STRIPE_PUBLISHABLE_KEY` – the `pk_test_...` key from your Stripe dashboard.
+- `VITE_CHECKOUT_API_BASE` – base URL for the checkout API (e.g., `http://localhost:3001` when the `nft_mint_server` is running locally). Leave blank in production to default to same-origin requests.
+- `VITE_STRIPE_PRICE_ID` – the `price_...` identifier that the landing page CTA should sell. Create it from a Stripe Product → Pricing plan.
+
+The associated secret keys (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`) live in `projects/joltkin-contracts/nft_mint_server/.env` and must be configured before the backend can create sessions or accept webhooks.
+
+With those values set, the “Sell Stripe Test Ticket” card on the homepage will create a Checkout Session via `/api/stripe/checkout-session`, redirect the user to Stripe-hosted checkout, and emit telemetry so judges can confirm the pilot loop.
+
 ### Continuous Integration
 
 This project uses [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) to define CI workflows, which are located in the [.github/workflows](`../../.github/workflows`) folder.

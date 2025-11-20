@@ -31,6 +31,7 @@ Run the following commands within the project folder:
 - **Configure environment**: Execute `algokit generate env-file -a target_network localnet` to create a `.env.localnet` file with default configuration for `localnet`.
 - **Start LocalNet**: Use `algokit localnet start` to initiate a local Algorand network.
 
+
 ### Development Workflow
 
 #### Terminal
