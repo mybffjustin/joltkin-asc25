@@ -133,3 +133,4 @@ debug_traces/
 *.tar.gz
 *.zip
 *.7z
+.vercel

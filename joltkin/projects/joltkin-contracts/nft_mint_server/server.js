@@ -18,6 +18,15 @@ dotenv.config({ path: path.join(__dirname, '.env') })
 
 const stripeRoutes = require('./routes/stripeCheckout')
 
+function readEnv(key) {
+  const raw = process.env[key]
+  if (typeof raw !== 'string') {
+    return undefined
+  }
+  const trimmed = raw.trim()
+  return trimmed.length > 0 ? trimmed : undefined
+}
+
 const app = express()
 const port = process.env.PORT || 3001
 
@@ -31,10 +40,16 @@ app.use(express.json())
 // Log whether environment variables are being read properly.
 // Developers will need to set their own API keys in .env (never commit secrets).
 console.log('Backend server starting...')
-console.log('Pinata API Key:', process.env.PINATA_API_KEY ? 'Loaded' : 'Not Loaded')
-console.log('Pinata API Secret:', process.env.PINATA_API_SECRET ? 'Loaded' : 'Not Loaded')
-console.log('Pinata JWT:', process.env.PINATA_JWT ? 'Loaded' : 'Not Loaded')
-console.log('Stripe secret key:', process.env.STRIPE_SECRET_KEY ? 'Loaded' : 'Not Loaded')
+const pinataEnv = {
+  pinataApiKey: readEnv('PINATA_API_KEY'),
+  pinataApiSecret: readEnv('PINATA_API_SECRET'),
+  pinataJwt: readEnv('PINATA_JWT'),
+  stripeSecretKey: readEnv('STRIPE_SECRET_KEY'),
+}
+console.log('Pinata API Key:', pinataEnv.pinataApiKey ? 'Loaded' : 'Not Loaded')
+console.log('Pinata API Secret:', pinataEnv.pinataApiSecret ? 'Loaded' : 'Not Loaded')
+console.log('Pinata JWT:', pinataEnv.pinataJwt ? 'Loaded' : 'Not Loaded')
+console.log('Stripe secret key:', pinataEnv.stripeSecretKey ? 'Loaded' : 'Not Loaded')
 
 // Multer setup: keep uploaded files in memory (not saved to disk).
 // This makes it easier to forward the file directly to Pinata.
@@ -43,12 +58,12 @@ const upload = multer({ storage: multer.memoryStorage() })
 // Pinata client setup.
 // By default this uses API key + secret from your .env, or JWT if provided.
 const pinataConfig = {}
-if (process.env.PINATA_JWT) {
-  pinataConfig.pinataJwt = process.env.PINATA_JWT
+if (pinataEnv.pinataJwt) {
+  pinataConfig.pinataJwt = pinataEnv.pinataJwt
 }
-if (process.env.PINATA_API_KEY && process.env.PINATA_API_SECRET) {
-  pinataConfig.pinataApiKey = process.env.PINATA_API_KEY
-  pinataConfig.pinataSecretApiKey = process.env.PINATA_API_SECRET
+if (pinataEnv.pinataApiKey && pinataEnv.pinataApiSecret) {
+  pinataConfig.pinataApiKey = pinataEnv.pinataApiKey
+  pinataConfig.pinataSecretApiKey = pinataEnv.pinataApiSecret
 }
 
 if (!pinataConfig.pinataJwt && !(pinataConfig.pinataApiKey && pinataConfig.pinataSecretApiKey)) {
@@ -190,7 +205,13 @@ app.post('/api/pin-image', upload.single('file'), async (req, res) => {
 // Stripe endpoints (checkout session, webhook, etc.)
 app.use('/api/stripe', stripeRoutes)
 
-// Start the server
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Backend listening at http://localhost:${port}`)
-})
+// When this module is required (e.g., inside a Vercel serverless function) we
+// export the configured Express app instead of binding a port. Local runs still
+// call listen so `pnpm start:nft-server` keeps working.
+if (require.main === module) {
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`Backend listening at http://localhost:${port}`)
+  })
+}
+
+module.exports = app

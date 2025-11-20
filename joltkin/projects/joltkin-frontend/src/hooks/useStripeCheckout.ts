@@ -88,7 +88,7 @@ export function useStripeCheckout(options?: UseStripeCheckoutOptions) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(payload),
-          credentials: 'include',
+          credentials: 'omit',
         })
 
         if (!response.ok) {

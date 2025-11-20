@@ -1,0 +1,12 @@
+{
+  "name": "joltkin-asc25",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:api": "echo 'API functions are bundled by Vercel'"
+  },
+  "dependencies": {
+    "stripe": "20.0.0"
+  }
+}
