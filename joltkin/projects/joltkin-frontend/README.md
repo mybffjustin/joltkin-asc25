@@ -2,6 +2,12 @@
 
 This starter React project has been generated using AlgoKit. See below for default getting started instructions.
 
+## Current Focus (Nov 2025)
+
+- We are skipping the upcoming Algorand Startup Challenge and will re-evaluate once the product aligns with that program’s timelines.
+- Immediate priority is customer discovery and demand validation for the pilot Stripe checkout flow so we can verify there is a repeatable use case before scaling.
+- When traction is demonstrated, we will pursue non-dilutive, equity-free funding (grants, ecosystem programs) rather than taking dilutive capital prematurely.
+
 ## Setup
 
 ### Initial Setup

@@ -103,7 +103,7 @@ const Home: React.FC<HomeProps> = () => {
                     <li className="flex items-start gap-3">
                       <span className="mt-1 h-2.5 w-2.5 rounded-full bg-rose-400" />
                       <span>
-                        Discovery: 14 Harvard org interviews logged—DAO intake, Student Engagement loop, and SOCH&apos;s 50k sq ft hub
+                        Discovery: 18+ Harvard org interviews logged—DAO intake, Student Engagement loop, and SOCH&apos;s 50k sq ft hub
                         mapped for event logistics.
                       </span>
                     </li>
@@ -122,15 +122,15 @@ const Home: React.FC<HomeProps> = () => {
                   <ol className="mt-4 space-y-2 text-sm text-slate-200">
                     <li className="flex gap-3">
                       <span className="font-semibold text-rose-300">01</span>
-                      <span>Nov 1: Drop discovery recap + explorer Loom in Algorand Startup + Harvard i-lab Slack channels.</span>
+                      <span>Nov 30: Ship updated discovery recap + Harvard i-lab Slack channels, noting we&apos;re deferring the next challenge cycle.</span>
                     </li>
                     <li className="flex gap-3">
                       <span className="font-semibold text-rose-300">02</span>
-                      <span>Nov 8: Lock DAO accessibility consultant + SOCH StudentOrg ops letters of intent.</span>
+                      <span>Dec 7: Continue customer discovery and demand validation with DAO accessibility consultant + SOCH StudentOrg ops, logging signed intent where possible.</span>
                     </li>
                     <li className="flex gap-3">
                       <span className="font-semibold text-rose-300">03</span>
-                      <span>Nov 15: Submit $125K Algorand Startup Challenge packet with Harvard pilot endorsements.</span>
+                      <span>Dec 14: Identify fit-to-purpose, non-dilutive, equity-free funding programs to pursue once demand metrics hit the go threshold.</span>
                     </li>
                   </ol>
                 </div>
@@ -634,10 +634,7 @@ const Home: React.FC<HomeProps> = () => {
               <ul className="mt-6 space-y-4 text-sm text-slate-300">
                 <li className="flex gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-rose-400" />
-                  <span>
-                    Founder-led marketing cadence: LinkedIn recap, Algorand + Harvard i-lab Slack updates, and 2-min explorer Loom ahead of
-                    November submissions.
-                  </span>
+                  <span>Founder-led marketing cadence: LinkedIn recap, Algorand + Harvard i-lab Slack updates.</span>
                 </li>
                 <li className="flex gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-rose-300" />
